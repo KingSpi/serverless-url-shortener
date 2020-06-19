@@ -10,14 +10,14 @@
     },
     "fallbackUrl": {
       "type": "string",
-      "defaultValue": "https://blog.jeremylikness.com/?utm_source=jelikness&utm_medium=github&utm_campaign=url_shortener",
+      "defaultValue": "https://transactcampus.com/?utm_source=transact&utm_medium=github&utm_campaign=url_shortener",
       "metadata": {
         "description": "The URL to fallback to if the short URL is invalid or not found"
       }
     },
     "utmSource": {
       "type": "string",
-      "defaultValue": "jeliknes",
+      "defaultValue": "transact",
       "metadata": {
         "description": "UTM_SOURCE for appending to end of URL for tracking"
       }
@@ -37,7 +37,7 @@
     },
     "sourceCodeRepositoryURL": {
       "type": "string",
-      "defaultValue": "https://github.com/JeremyLikness/serverless-url-shortener",
+      "defaultValue": "https://github.com/KingSpi/serverless-url-shortener",
       "metadata": {
         "description": "Source code repository URL"
       }
@@ -53,7 +53,7 @@
   "variables": {
     "shortenerUrl": "[concat(parameters('siteName'), '.azurewebsites.net/')]",
     "hostingPlanName": "[concat(parameters('siteName'), '-plan')]",
-    "storageAccountName": "[concat('azfnstore',uniquestring(resourceGroup().id))]",
+    "storageAccountName": "[concat('azfnstore',parameters('siteName'))]",
     "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
   },
   "resources": [
