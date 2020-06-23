@@ -52,8 +52,8 @@
   },
   "variables": {
     "shortenerUrl": "[concat(parameters('siteName'), '.azurewebsites.net/')]",
-    "hostingPlanName": "ASP-Prod-US-West-URL-Web-BF",
-    "storageAccountName": "saproduswesturlservicebf",
+    "hostingPlanName": "ASP-Prod-US-West-URL-Web-B2",
+    "storageAccountName": "saproduswesturlserviceb2",
     "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
   },
   "resources": [
@@ -74,7 +74,7 @@
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
       "apiVersion": "2016-01-01",
-      "location": "[resourceGroup().location]",
+      "location": "West US",
       "kind": "Storage",
       "sku": {
         "name": "[parameters('storageAccountType')]"
@@ -84,7 +84,7 @@
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2016-09-01",
       "name": "[variables('hostingPlanName')]",
-      "location": "[resourceGroup().location]",
+      "location": "West US",
       "sku": {
         "name": "Y1",
         "tier": "Dynamic",
@@ -101,7 +101,7 @@
       "type": "Microsoft.Web/sites",
       "apiVersion": "2016-08-01",
       "name": "[parameters('siteName')]",
-      "location": "[resourceGroup().location]",
+      "location": "West US",
       "kind": "functionapp",
       "properties": {
         "name": "[parameters('siteName')]",
