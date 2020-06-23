@@ -1,72 +1,29 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {
-    "siteName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the function app that you wish to create."
-      }
-    },
-    "fallbackUrl": {
-      "type": "string",
-      "defaultValue": "https://transactcampus.com/?utm_source=transact&utm_medium=github&utm_campaign=url_shortener",
-      "metadata": {
-        "description": "The URL to fallback to if the short URL is invalid or not found"
-      }
-    },
-    "utmSource": {
-      "type": "string",
-      "defaultValue": "transact",
-      "metadata": {
-        "description": "UTM_SOURCE for appending to end of URL for tracking"
-      }
-    },
-    "storageAccountType": {
-      "type": "string",
-      "defaultValue": "Standard_LRS",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_GRS",
-        "Standard_RAGRS",
-        "Standard_L"
-      ],
-      "metadata": {
-        "description": "Storage Account type"
-      }
-    },
-    "sourceCodeRepositoryURL": {
-      "type": "string",
-      "defaultValue": "https://github.com/KingSpi/serverless-url-shortener",
-      "metadata": {
-        "description": "Source code repository URL"
-      }
-    },
-    "sourceCodeBranch": {
-      "type": "string",
-      "defaultValue": "master",
-      "metadata": {
-        "description": "Sourcecode Repo branch"
-      }
-    }
-  },
   "variables": {
-    "shortenerUrl": "app-prod-us-west-url-web.azurewebsites.net/')]",
+    "fallbackUrl": "https://transactcampus.com/",
     "hostingPlanName": "ASP-Prod-US-West-URL-Web",
+    "shortenerUrl": "app-prod-us-west-url-web.azurewebsites.net')]",
+    "siteName": "APP-Prod-US-West-URL-Web-B3",
+    "sourceCodeBranch": "master",
+    "sourceCodeRepositoryURL": "https://github.com/KingSpi/serverless-url-shortener",
+    "storageAccountId": "[concat(resourceGroup('RG-Prod-US-West-URL-B3').id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
     "storageAccountName": "saproduswesturlservice",
-    "storageAccountid": "[concat(resourceGroup('RG-Prod-US-West-URL-B3').id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+    "storageAccountType": "Standard_LRS",
+    "utmSource": "transact"
   },
   "resources": [
     {
       "type": "microsoft.insights/components",
       "apiVersion": "2015-05-01",
-      "name": "[parameters('siteName')]",
+      "name": "[variables('siteName')]",
       "location": "West US",
       "tags": {
-        "[concat('hidden-link:', resourceGroup('RG-Prod-US-West-URL-B3').id, '/providers/Microsoft.Web/sites/', parameters('siteName'))]": "Resource"
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('siteName'))]": "Resource"
       },
       "properties": {
-        "ApplicationId": "[parameters('siteName')]",
+        "ApplicationId": "[variables('siteName')]",
         "Request_Source": "IbizaWebAppExtensionCreate"
       }
     },
@@ -100,17 +57,17 @@
     {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2016-08-01",
-      "name": "[parameters('siteName')]",
+      "name": "[variables('siteName')]",
       "location": "West US",
       "kind": "functionapp",
       "properties": {
-        "name": "[parameters('siteName')]",
+        "name": "[variables('siteName')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
         "clientAffinityEnabled": false
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
-        "[resourceId('microsoft.insights/components/', parameters('siteName'))]"
+        "[resourceId('microsoft.insights/components/', variables('siteName'))]"
       ],
       "resources": [
         {
@@ -119,20 +76,20 @@
           "apiVersion": "2015-08-01",
           "properties": {
             "Project": "functionApp",
-            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
-            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
-            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
-            "WEBSITE_CONTENTSHARE": "[toLower(parameters('siteName'))]",
-            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', parameters('siteName')), '2015-05-01').InstrumentationKey]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]",
+            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]",
+            "WEBSITE_CONTENTSHARE": "[toLower(variables('siteName'))]",
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('siteName')), '2015-05-01').InstrumentationKey]",
             "SHORTENER_URL": "[toLower(variables('shortenerUrl'))]",
-            "UTM_SOURCE": "[toLower(parameters('utmSource'))]",
-            "FALLBACK_URL": "[toLower(parameters('fallbackUrl'))]",
+            "UTM_SOURCE": "[toLower(variables('utmSource'))]",
+            "FALLBACK_URL": "[toLower(variables('fallbackUrl'))]",
             "FUNCTIONS_EXTENSION_VERSION": "~1",
             "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0",
             "ROUTING_EXTENSION_VERSION": "~0.2"
           },
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('siteName'))]",
+            "[resourceId('Microsoft.Web/sites', variables('siteName'))]",
             "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
           ]
         },
@@ -141,16 +98,17 @@
           "apiVersion": "2015-08-01",
           "name": "web",
           "properties": {
-            "RepoUrl": "[parameters('sourceCodeRepositoryURL')]",
-            "branch": "[parameters('sourceCodeBranch')]",
+            "RepoUrl": "[variables('sourceCodeRepositoryURL')]",
+            "branch": "[variables('sourceCodeBranch')]",
             "IsManualIntegration": "true"
           },
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/', parameters('siteName'))]",
-            "[resourceId('Microsoft.Web/Sites/config', parameters('siteName'), 'appsettings')]"
+            "[resourceId('Microsoft.Web/sites/', variables('siteName'))]",
+            "[resourceId('Microsoft.Web/Sites/config', variables('siteName'), 'appsettings')]"
           ]
         }
       ]
     }
   ]
 }
+
