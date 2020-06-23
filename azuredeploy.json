@@ -51,10 +51,10 @@
     }
   },
   "variables": {
-    "shortenerUrl": "[concat(parameters('siteName'), '.azurewebsites.net/')]",
-    "hostingPlanName": "ASP-Prod-US-West-URL-Web-B2",
-    "storageAccountName": "saproduswesturlserviceb2",
-    "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+    "shortenerUrl": "app-prod-us-west-url-web.azurewebsites.net/')]",
+    "hostingPlanName": "ASP-Prod-US-West-URL-Web",
+    "storageAccountName": "saproduswesturlservice",
+    "storageAccountid": "[concat(resourceGroup('RG-Prod-US-West-URL-B3').id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
   },
   "resources": [
     {
@@ -63,7 +63,7 @@
       "name": "[parameters('siteName')]",
       "location": "West US",
       "tags": {
-        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('siteName'))]": "Resource"
+        "[concat('hidden-link:', resourceGroup('RG-Prod-US-West-URL-B3').id, '/providers/Microsoft.Web/sites/', parameters('siteName'))]": "Resource"
       },
       "properties": {
         "ApplicationId": "[parameters('siteName')]",
